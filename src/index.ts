@@ -6,6 +6,8 @@ import fs from 'fs'
  * @type {string[]}
  */
 export const refreshPaths: string[] = [
+    'app/View/Pages/**',
+    'app/View/Layouts/**',
     'app/View/Levdwire/**',
     'app/View/Components/**',
     'resources/languages/**',
