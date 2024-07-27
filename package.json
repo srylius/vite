@@ -1,8 +1,8 @@
 {
     "type"              : "module",
     "name"              : "@srylius/vite",
-    "description"       : "Vite plugin for the Srylius ecosystem.",
-    "keywords"          : ["srylius", "vite", "vite-plugin", "frontend", "tooling"],
+    "description"       : "Leverage the power of Vite more easily when developing your web applications.",
+    "keywords"          : ["plugin","framework","typescript","server","frontend","tooling","dev","vite","srylius"],
     "version"           : "1.0.0",
     "author"            : "Srylius",
     "license"           : "MIT",
