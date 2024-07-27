@@ -493,7 +493,7 @@ function resolveReloadConfig({ refresh: config }: Required<PluginConfig>): Plugi
 
         /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
         /** @ts-ignore */
-        plugin.__srylius_plugin_config = c
+        plugin.__srylius_plugin_config = rConfig
 
         return plugin
     })
