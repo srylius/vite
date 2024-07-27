@@ -183,7 +183,7 @@ function resolveSryliusPlugin(pluginConfig: Required<PluginConfig>): SryliusPlug
         // Enforce plugin invocation tier similar to webpack loaders.
         enforce : 'post',
 
-        //
+        // Configure srylius plugin for vite.
         config  : (config, { command, mode }) => {
             userConfig = config
 
@@ -196,7 +196,9 @@ function resolveSryliusPlugin(pluginConfig: Required<PluginConfig>): SryliusPlug
             // Get the asset url if an asset link address is set for the assets.
             const assetUrl = env.SRYLIUS_APP_ASSET_URL ?? ''
 
-            //
+            // Retrieve configuration settings for the development server from the environment file.
+            const serverConfig = resolveEnvironmentServerConfig(env)
+
             return {
                 base        : userConfig.base ?? (command === 'build' ? resolveBase(pluginConfig, assetUrl) : ''),
                 publicDir   : userConfig.publicDir ?? false,
@@ -210,7 +212,15 @@ function resolveSryliusPlugin(pluginConfig: Required<PluginConfig>): SryliusPlug
                     assetsInlineLimit   : userConfig.build?.assetsInlineLimit ?? 0,
                 },
                 server      : {
-                    origin: userConfig.server?.origin,
+                    origin  : userConfig.server?.origin ?? '__srylius_vite_placeholder__',
+                    ...(serverConfig ? {
+                        host  : userConfig.server?.host ?? serverConfig.host,
+                        hmr   : userConfig.server?.hmr === false ? false : {
+                            ...serverConfig.hmr,
+                            ...(userConfig.server?.hmr === true ? {} : userConfig.server?.hmr),
+                        },
+                        https : userConfig.server?.https ?? serverConfig.https,
+                    } : undefined),
                 },
                 resolve     : {
                     alias   : Array.isArray(userConfig.resolve?.alias)
@@ -540,6 +550,48 @@ function resolveDevServerUrl(address: AddressInfo, config: ResolvedConfig): DevS
 
     // Return the parsed development server connection address.
     return `${protocol}://${host}:${port}`
+}
+
+/**
+ * Resolve the server config from the environment.
+ *
+ * @param {Record<string, string>} env
+ *
+ * @return {{hmr?: {host: string} | undefined, host?: string | undefined, https?: {cert: Buffer, key: Buffer}}|undefined}
+ */
+function resolveEnvironmentServerConfig(env: Record<string, string>): {
+    hmr   ?: { host : string }
+    host  ?: string,
+    https ?: { cert : Buffer, key : Buffer }
+} | undefined {
+    // Check if the certificate and key are provided in the application's environment file.
+    if (! env.SRYLIUS_VITE_SERVER_KEY && ! env.SRYLIUS_VITE_SERVER_CERT) {
+        return
+    }
+
+    // Check if the provided key and certificate file are present in the application's environment file.
+    if (! fs.existsSync(env.SRYLIUS_VITE_SERVER_KEY) || ! fs.existsSync(env.SRYLIUS_VITE_SERVER_CERT)) {
+        // Notify me if certificate key and certificate file do not exist.
+        throw Error(`Unable to find the certificate files specified in your environment. Ensure you have correctly configured SRYLIUS_VITE_SERVER_KEY: [${env.SRYLIUS_VITE_SERVER_KEY}] and SRYLIUS_VITE_SERVER_CERT: [${env.SRYLIUS_VITE_SERVER_CERT}].`)
+    }
+
+    // Get the application url for the hot module and development server from the environment file.
+    const host = new URL(env.SRYLIUS_APP_BASE_URL).host
+
+    // Check if a valid host is available.
+    if (! host) {
+        // Notify developer that a valid host is not available.
+        throw Error(`Unable to determine the host from the environment's SRYLIUS_APP_BASE_URL : [${env.SRYLIUS_APP_BASE_URL}].`)
+    }
+
+    return {
+        hmr   : { host },
+        host,
+        https : {
+            key  : fs.readFileSync(env.SRYLIUS_VITE_SERVER_KEY),
+            cert : fs.readFileSync(env.SRYLIUS_VITE_SERVER_CERT),
+        },
+    }
 }
 
 /**
