@@ -1,3 +1,5 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
 import fs from 'fs'
 
 /**
@@ -17,3 +19,15 @@ export const refreshPaths: string[] = [
     'routes/**',
     'system/**',
 ].filter(path => fs.existsSync(path.replace(/\*\*$/, '')))
+
+/**
+ * The directory of the current file.
+ *
+ * @return {string}
+ */
+function dirname(): string {
+    // This URL.fileURLToPath function decodes the file URL to a path string and
+    // ensures that the URL control characters (/, %) are correctly appended/adjusted
+    // when converting the given file URL into a path.
+    return fileURLToPath(new URL('.', import.meta.url))
+}
