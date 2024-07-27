@@ -563,7 +563,7 @@ function isIpv6(address: AddressInfo): boolean {
  */
 function resolveNoExternal(config: UserConfig): true|Array<string|RegExp> {
     const userNoExternal = (config.ssr as SSROptions|undefined)?.noExternal
-    const pluginNoExternal = ['srylius-vite-plugin']
+    const pluginNoExternal = ['@srylius/vite']
 
     //
     if (userNoExternal === true) {
