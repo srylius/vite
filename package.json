@@ -3,7 +3,7 @@
     "name"              : "@srylius/vite",
     "description"       : "Leverage the power of Vite more easily when developing your web applications.",
     "keywords"          : ["plugin","framework","typescript","server","frontend","tooling","dev","vite","srylius"],
-    "version"           : "1.0.0",
+    "version"           : "1.0.1",
     "author"            : "Srylius",
     "license"           : "MIT",
     "homepage"          : "https://srylius.com/",
@@ -32,7 +32,7 @@
     },
 
     "bin"               : {
-        "clean-orphaned-assets": "bin/clean.js"
+        "clean"         : "bin/clean.js"
     },
     "types"             : "./dist/index.d.ts",
     "exports"           : {
@@ -44,7 +44,7 @@
 
     "scripts"           : {
         "build"              : "npm run build:plugin",
-        "build:plugin"       : "rm -rf dist && npm run build:plugin-types && npm run build:plugin-esm && cp src/vite.html dist/",
+        "build:plugin"       : "rm -rf dist && npm run build:plugin:types && npm run build:plugin:esm && cp src/vite.html dist/",
         "build:plugin:types" : "tsc --emitDeclarationOnly",
         "build:plugin:esm"   : "esbuild src/index.ts --platform=node --format=esm --outfile=dist/index.js",
         "lint"               : "eslint --ext .ts ./src ./tests",
