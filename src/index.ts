@@ -21,6 +21,35 @@ export const refreshPaths: string[] = [
 ].filter(path => fs.existsSync(path.replace(/\*\*$/, '')))
 
 /**
+ * Runtime version of the Srylius vite plugin.
+ */
+function version(): string {
+    try {
+        // Get the current version of the plugin from the package manager file.
+        return JSON.parse(fs.readFileSync(path.join(dirname(), '../package.json')).toString())?.version
+    } catch {
+        // If not available, pass an empty string.
+        return ''
+    }
+}
+
+/**
+ * Runtime version of the Srylius framework.
+ */
+function versionSrylius(): string {
+    try {
+        // Get all available packages from the package manager.
+        const composer = JSON.parse(fs.readFileSync('composer.lock').toString())
+
+        // Check if the Srylius framework is available in your package manager.
+        return composer.packages?.find((composerPackage: { name: string }) => composerPackage.name === 'srylius/framework')?.version ?? ''
+    } catch {
+        // If not available, pass an empty string.
+        return ''
+    }
+}
+
+/**
  * The directory of the current file.
  *
  * @return {string}
