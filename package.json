@@ -3,7 +3,7 @@
     "name"              : "@srylius/vite",
     "description"       : "Leverage the power of Vite more easily when developing your web applications.",
     "keywords"          : ["plugin","framework","typescript","server","frontend","tooling","dev","vite","srylius"],
-    "version"           : "1.0.3",
+    "version"           : "1.0.6",
     "author"            : "Srylius",
     "license"           : "MIT",
     "homepage"          : "https://srylius.com/",
